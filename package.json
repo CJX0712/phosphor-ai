@@ -1,0 +1,28 @@
+{
+  "name": "phosphor-ai",
+  "version": "1.0.0",
+  "description": "Verification-first, zero-dependency AI numeric & algorithm core. Every module ships a mathematically provable invariant.",
+  "main": "phosphor.js",
+  "scripts": {
+    "test": "node test/selftest.js"
+  },
+  "keywords": [
+    "ai",
+    "machine-learning",
+    "linear-algebra",
+    "svd",
+    "pca",
+    "gmm",
+    "knn",
+    "mlp",
+    "attention",
+    "numerical-methods",
+    "zero-dependency"
+  ],
+  "author": "晨星 (CJX0712)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CJX0712/phosphor-ai.git"
+  }
+}

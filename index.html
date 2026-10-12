@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Phosphor · 验证优先的零依赖 AI 核心</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --panel:#ffffff; --ink:#1f2430; --sub:#6b7280; --line:#e5e7eb;
+    --brand:#2f6df6; --brand-d:#1b4fc4; --ok:#0f9d58; --bad:#d93025; --code:#0b2161;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;}
+  .wrap{max-width:920px;margin:0 auto;padding:32px 20px 64px;}
+  header{border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:24px;}
+  h1{font-size:28px;margin:0 0 6px;letter-spacing:.5px;}
+  .tag{display:inline-block;background:#eef3ff;color:var(--brand-d);border:1px solid #d6e2ff;padding:2px 10px;border-radius:999px;font-size:12px;margin-right:8px;}
+  .lead{color:var(--sub);margin:10px 0 0;}
+  section{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin:18px 0;box-shadow:0 1px 2px rgba(16,24,40,.04);}
+  h2{font-size:18px;margin:0 0 12px;display:flex;align-items:center;gap:8px;}
+  h2 .n{background:var(--brand);color:#fff;width:24px;height:24px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;}
+  button{background:var(--brand);color:#fff;border:0;border-radius:8px;padding:11px 20px;font-size:15px;cursor:pointer;font-weight:600;}
+  button:hover{background:var(--brand-d);}
+  button[disabled]{opacity:.6;cursor:default;}
+  #summary{margin:14px 0;font-weight:600;font-size:16px;}
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);}
+  th{color:var(--sub);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;}
+  td .det{color:var(--sub);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;}
+  .ok{color:var(--ok);font-weight:700;}
+  .bad{color:var(--bad);font-weight:700;}
+  .arch{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:6px;}
+  .arch .card{border:1px solid var(--line);border-radius:10px;padding:12px;background:#fafbff;}
+  .arch .card b{display:block;color:var(--brand-d);margin-bottom:4px;}
+  .arch .card span{color:var(--sub);font-size:12.5px;}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#f1f3f9;padding:1px 6px;border-radius:5px;color:var(--code);font-size:13px;}
+  footer{color:var(--sub);font-size:13px;text-align:center;margin-top:30px;}
+  code.block{display:block;background:#0b1020;color:#d6e2ff;padding:14px 16px;border-radius:10px;overflow:auto;font-size:13px;line-height:1.5;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>✦ Phosphor</h1>
+    <div>
+      <span class="tag">零依赖</span>
+      <span class="tag">零构建</span>
+      <span class="tag">可验证</span>
+      <span class="tag">MIT</span>
+    </div>
+    <p class="lead">验证优先（verification-first）的 AI 数值与算法核心。每个模块都内置一条可被独立实现交叉验证的「数学不变量」——不只是跑得动，更要证明自己是对的。</p>
+  </header>
+
+  <section>
+    <h2><span class="n">⬡</span>架构</h2>
+    <div class="arch">
+      <div class="card"><b>Linalg</b><span>Jacobi SVD / 特征分解 / Cholesky / 逆</span></div>
+      <div class="card"><b>GradCheck</b><span>中心差分梯度检验</span></div>
+      <div class="card"><b>PCA</b><span>协方差 PSD · 载荷正交</span></div>
+      <div class="card"><b>GMM</b><span>EM · 责任度和=1 · 似然单调</span></div>
+      <div class="card"><b>kNN</b><span>k=1 训练集误差=0</span></div>
+      <div class="card"><b>MLP</b><span>tanh 反向传播</span></div>
+      <div class="card"><b>Attention</b><span>Scaled Dot-Product</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">✓</span>运行自检（浏览器内）</h2>
+    <p class="lead">点击下方按钮，浏览器内即时执行全部不变量自检，结果实时呈现（精度为浮点残差）。</p>
+    <button id="run">▶ 运行自检</button>
+    <div id="summary"></div>
+    <table id="tbl" style="display:none">
+      <thead><tr><th>不变量</th><th>结果</th><th>精度 / 详情</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2><span class="n">{}</span>用法</h2>
+    <code class="block">// Node
+const P = require('./phosphor.js');
+const d = P.Linalg.svd([[1,2],[3,4],[5,6]]);
+console.log(d.S);
+
+// 浏览器 &lt;script src="phosphor.js"&gt;&lt;/script&gt; → window.Phosphor
+
+// 自检
+node test/selftest.js   // → 15/15 全绿</code>
+  </section>
+
+  <footer>Phosphor v1.0.0 · 作者 <b>晨星 (CJX0712)</b> · MIT License · 零重写 · 集大成 · 闭环交付</footer>
+</div>
+
+<script src="phosphor.js"></script>
+<script>
+(function(){
+  var L = Phosphor.Linalg;
+  function rms(A,B){var s=0,n=0;for(var i=0;i<A.length;i++)for(var j=0;j<A[0].length;j++){var d=A[i][j]-B[i][j];s+=d*d;n++;}return Math.sqrt(s/n);}
+  function randMat(rng,r,c){var M=[];for(var i=0;i<r;i++){var x=[];for(var j=0;j<c;j++)x.push(rng()*2-1);M.push(x);}return M;}
+  var rng = L.mulberry32(20261013);
+  var results = [];
+  function ok(name,cond,detail){results.push({name:name,pass:cond,detail:detail});}
+
+  function runAll(){
+    results = [];
+    // SVD
+    var A = randMat(rng,6,4);
+    var d = L.svd(A);
+    var S = L.zeros(4,4); for(var i=0;i<4;i++) S[i][i]=d.S[i];
+    var recon = L.matmul(L.matmul(d.U,S),L.transpose(d.V));
+    ok('SVD 重构 A≈U·S·Vᵀ', rms(A,recon)<1e-9, 'err='+rms(A,recon).toExponential(2));
+    ok('SVD 左奇异向量正交 UᵀU=I', rms(L.matmul(L.transpose(d.U),d.U),L.identity(4))<1e-9,'');
+    ok('SVD 右奇异向量正交 VᵀV=I', rms(L.matmul(L.transpose(d.V),d.V),L.identity(4))<1e-9,'');
+
+    // JacobiEig
+    var D=L.zeros(5,5); [1,5,25,125,625].forEach(function(v,i){D[i][i]=v;});
+    var B=randMat(rng,5,5); var Sym=L.addM(D,L.scaleM(L.addM(B,L.transpose(B)),0.005));
+    var e=L.jacobiEig(Sym);
+    var normA=e.values.reduce(function(m,x){return Math.max(m,Math.abs(x));},0)||1, mx=0, mo=0;
+    for(var i=0;i<5;i++){var v=e.vectors[i];var Av=L.matmul(Sym,L.colVec(v)).map(function(r){return r[0];});var lv=v.map(function(x){return x*e.values[i];});var res=0;for(var j=0;j<5;j++)res+=(Av[j]-lv[j])*(Av[j]-lv[j]);mx=Math.max(mx,Math.sqrt(res)/normA);for(var k=i+1;k<5;k++)mo=Math.max(mo,Math.abs(L.dot(v,e.vectors[k])));}
+    ok('JacobiEig ‖Av−λv‖/‖A‖', mx<1e-7,'relRes='+mx.toExponential(2));
+    ok('JacobiEig 特征向量正交', mo<1e-9,'');
+
+    // inv
+    var Br=randMat(rng,4,4); var A2=L.addM(L.matmul(Br,L.transpose(Br)),L.scaleM(L.identity(4),0.5));
+    ok('矩阵逆 A·A⁻¹=I', rms(L.matmul(A2,L.inv(A2)),L.identity(4))<1e-9,'');
+
+    // PCA
+    var X=[]; for(var i=0;i<60;i++){var r=[];for(var j=0;j<4;j++)r.push(rng());X.push(r);}
+    var p=P.PCA(X,2);
+    ok('PCA 协方差半正定 λ≥0', p.eigenvalues.every(function(l){return l>=-1e-9;}),'');
+    ok('PCA 载荷向量正交', (function(){var C=p.components,mxo=0;for(var a=0;a<2;a++)for(var b=a+1;b<2;b++)mxo=Math.max(mxo,Math.abs(L.dot(C.map(function(r){return r[a];}),C.map(function(r){return r[b];}))));return mxo;})()<1e-9,'');
+
+    // GMM
+    var Xg=[]; for(var i=0;i<120;i++)Xg.push([rng()*2-1+(i%2?3:0),rng()*2-1+(i%2?2:0)]);
+    var m=P.GMM(Xg,2,{seed:11,maxIter:300});
+    ok('GMM 权重和=1', Math.abs(m.weights.reduce(function(a,b){return a+b;},0)-1)<1e-9,'');
+    var mono=true; for(var t=1;t<m.logLikelihoods.length;t++) if(m.logLikelihoods[t]-m.logLikelihoods[t-1]<-1e-6) mono=false;
+    ok('GMM 对数似然单调不降', mono,'');
+
+    // kNN
+    var Xk=[[0,0],[1,1],[2,2],[3,3]], yk=[0,1,0,1];
+    var kn=P.KNN(Xk,yk,1,{task:'classification'}); var err=0;
+    for(var i=0;i<Xk.length;i++) if(kn.predict(Xk[i])!==yk[i]) err++;
+    ok('kNN k=1 训练集误差=0', err===0,'');
+
+    // MLP gradcheck
+    var sizes=[3,5,2], r2=L.mulberry32(3), prm=[]; for(var i=0;i<30;i++)prm.push(r2()*2-1);
+    var gc=P.gradCheck(function(p){return P.MLP.lossGrad(sizes,p,[0.5,-0.3,0.8],[1,-1]);},prm,{relTol:1e-4});
+    ok('MLP 反向传播梯度检验', gc.pass,'maxRelErr='+gc.maxRelError.toExponential(2));
+
+    // Attention gradcheck
+    var n=4,dd=3,r3=L.mulberry32(5);
+    var Q=randMat(r3,n,dd),K=randMat(r3,n,dd),Vr=randMat(r3,n,dd),dOut=randMat(r3,n,dd);
+    function flat(pQ,pK,pV){var g=P.Attention.sdpaLossGrad(pQ,pK,pV,dOut);var gr=[];for(var i=0;i<n;i++)for(var j=0;j<dd;j++)gr.push(g.dQ[i][j]);for(var i=0;i<n;i++)for(var j=0;j<dd;j++)gr.push(g.dK[i][j]);for(var i=0;i<n;i++)for(var j=0;j<dd;j++)gr.push(g.dV[i][j]);return {loss:g.loss,grad:gr};}
+    var params=[];Q.forEach(function(r){r.forEach(function(v){params.push(v);});});K.forEach(function(r){r.forEach(function(v){params.push(v);});});Vr.forEach(function(r){r.forEach(function(v){params.push(v);});});
+    var gc2=P.gradCheck(function(p){var pQ=[],pK=[],pV=[],idx=0;for(var i=0;i<n;i++){var r=[];for(var j=0;j<dd;j++)r.push(p[idx++]);pQ.push(r);}for(var i=0;i<n;i++){var r=[];for(var j=0;j<dd;j++)r.push(p[idx++]);pK.push(r);}for(var i=0;i<n;i++){var r=[];for(var j=0;j<dd;j++)r.push(p[idx++]);pV.push(r);}return flat(pQ,pK,pV);},params,{relTol:1e-4});
+    ok('Attention 解析梯度检验', gc2.pass,'maxRelErr='+gc2.maxRelError.toExponential(2));
+
+    render();
+  }
+
+  function render(){
+    var tbody=document.getElementById('rows'); tbody.innerHTML='';
+    var pass=0;
+    results.forEach(function(r){
+      if(r.pass)pass++;
+      var tr=document.createElement('tr');
+      tr.innerHTML='<td>'+r.name+'</td>'+
+        '<td class="'+(r.pass?'ok':'bad')+'">'+(r.pass?'✅ 通过':'❌ 失败')+'</td>'+
+        '<td class="det">'+(r.detail||'—')+'</td>';
+      tbody.appendChild(tr);
+    });
+    document.getElementById('tbl').style.display='table';
+    var s=document.getElementById('summary');
+    s.innerHTML = pass===results.length
+      ? '✅ 全部通过：'+pass+' / '+results.length
+      : '⚠️ 通过 '+pass+' / '+results.length;
+    s.style.color = pass===results.length ? 'var(--ok)' : 'var(--bad)';
+  }
+
+  document.getElementById('run').addEventListener('click', function(){
+    this.disabled=true; this.textContent='运行中…';
+    setTimeout(function(){ runAll(); this.disabled=false; this.textContent='▶ 重新运行'; }.bind(this), 30);
+  });
+})();
+</script>
+</body>
+</html>
