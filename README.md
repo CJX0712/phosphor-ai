@@ -1,5 +1,12 @@
 # ✦ Phosphor — 验证优先的零依赖 AI 核心
 
+<div align="center">
+
+[![License](https://img.shields.io/badge/License-MIT-green)](https://github.com/CJX0712/phosphor-ai/blob/main/LICENSE) [![Language](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript)](https://github.com/CJX0712/phosphor-ai) [![Deps](https://img.shields.io/badge/dependencies-0-brightgreen)](https://github.com/CJX0712) [![Verified](https://img.shields.io/badge/invariants-verified-brightgreen)](https://github.com/CJX0712) [![Author](https://img.shields.io/badge/author-晨星-blueviolet)](https://github.com/CJX0712)
+
+</div>
+
+
 > 世界级 AI 不应只「跑得动」，更要「证明自己是对的」。
 
 **Phosphor** 是一个**零依赖、零构建、可验证**的 AI 数值与算法核心。它把经典数值分析与现代机器学习算法，用最朴素的 JavaScript 重新实现，并且**每个模块都内置一条可被独立实现交叉验证的数学不变量（invariant）**。
